@@ -7,6 +7,7 @@ import { images } from './images';
 import IconButton from './components/IconButton';
 import Task from './components/Task';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppLoading from 'expo-app-loading'
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -32,8 +33,9 @@ const List = styled.ScrollView`
 export default function App() {
   const width = Dimensions.get('window').width; // 다양한 크기의 화면에서 양쪽에 동일한 공백 유지
 
+  const [isReady, setIsReady] = useState(false); // 데이터 불러올때 사용
   const [newTask, setNewTask] = useState('');
-  const [tasks, setTasks] = useState({});
+  const [tasks, setTasks] = useState({}); // 데이터 저장할때 사용
 
   // 데이터 저장하기
   const _saveTasks = async tasks => {
@@ -43,6 +45,12 @@ export default function App() {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  // 데이터 불러오기
+  const _loadTasks = async () => {
+    const loadedTasks = await AsyncStorage.getItem('tasks');
+    setTasks(JSON.parse(loadedTasks || '{}'));
   };
 
   // 추가 기능 
@@ -84,7 +92,7 @@ export default function App() {
   const _onBlur = () => {
     setNewTask('');
   };
-  return (
+  return isReady ? (
     <ThemeProvider theme={theme}>
       <Container>
         <StatusBar
@@ -114,5 +122,11 @@ export default function App() {
         </List>
       </Container>
     </ThemeProvider>
+  ) : ( // 로딩화면에서 저장한 데이터를 불러와서 화면을 렌더링
+    <AppLoading
+      startAsync={_loadTasks}
+      onFinish={() => setIsReady(true)}
+      onError={console.error}
+    />
   );
 };
