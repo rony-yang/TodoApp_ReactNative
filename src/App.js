@@ -45,7 +45,7 @@ export default function App() {
     }
   };
 
-  // 추가 기능
+  // 추가 기능 
   const _addTask = () => {
     const ID = Date.now().toString(); // 항목이 추가되는 시간의 타임스탬프 이용
     const newTaskObject = {
