@@ -6,6 +6,7 @@ import Input from './components/Input';
 import { images } from './images';
 import IconButton from './components/IconButton';
 import Task from './components/Task';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -34,6 +35,16 @@ export default function App() {
   const [newTask, setNewTask] = useState('');
   const [tasks, setTasks] = useState({});
 
+  // 데이터 저장하기
+  const _saveTasks = async tasks => {
+    try {
+      await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
+      setTasks(tasks);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   // 추가 기능
   const _addTask = () => {
     const ID = Date.now().toString(); // 항목이 추가되는 시간의 타임스탬프 이용
@@ -41,28 +52,28 @@ export default function App() {
       [ID] : {id: ID, text: newTask, completed: false},
     };
     setNewTask(''); // 값을 빈 문자열로 지정 : Input 컴포넌트 초기화
-    setTasks({...tasks, ...newTaskObject});
+    _saveTasks({...tasks, ...newTaskObject});
   };
 
   // 삭제 기능
   const _deleteTask = id =>  {
     const currentTasks = Object.assign({}, tasks);
     delete currentTasks[id];
-    setTasks(currentTasks);
+    _saveTasks(currentTasks);
   };
 
   // 완료 기능 : 함수가 호출될 때마다 완료 여부를 나타내는 completed 값이 전환
   const _toggleTask = id => {
     const currentTasks = Object.assign({}, tasks);
     currentTasks[id]['completed'] = !currentTasks[id]['completed'];
-    setTasks(currentTasks);
+    _saveTasks(currentTasks);
   };
 
   // 수정 기능
   const _updateTask = item => {
     const currentTasks = Object.assign({}, tasks);
     currentTasks[item.id] = item;
-    setTasks(currentTasks);
+    _saveTasks(currentTasks);
   };
 
   const _handleTextChange = text => {
