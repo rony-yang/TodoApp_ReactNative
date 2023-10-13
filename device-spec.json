@@ -1,0 +1,16 @@
+{
+  "supportedAbis": ["x86"],
+  "screenDensity": {
+    "defaultDensity": 440,
+    "allDensities": [440]
+  },
+  "screenSize": [
+    {
+      "width": 1080,
+      "height": 2160
+    }
+  ],
+  "sdkVersion": 30,
+  "ramBytes": 1536,
+  "vmHeapSize": 228
+}
